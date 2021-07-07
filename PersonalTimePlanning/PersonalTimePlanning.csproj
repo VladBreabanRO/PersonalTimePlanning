@@ -6,9 +6,4 @@
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="DataBaseModels\" />
-    <Folder Include="StaticHelperFunctions\" />
-  </ItemGroup>
-
 </Project>

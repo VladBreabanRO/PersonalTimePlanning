@@ -29,13 +29,13 @@ namespace PersonalTimePlanning.DataBaseOperations
             }
         }
 
-        public  Task SaveData<T>(string sql, T parameters)
-        {
-            using(IDbConnection connection = new SqlConnection(this._connectionString))
-            {
-                return connection.ExecuteAsync(sql, parameters);
-            }
-        }
+        //public  Task SaveData<T>(string sql, T parameters)
+        //{
+        //    using(IDbConnection connection = new SqlConnection(this._connectionString))
+        //    {
+        //        return connection.ExecuteAsync(sql, parameters);
+        //    }
+        //}
         // to do: functii de genul getTskList
         //exemplu mai jos:
         public async Task<List<Tasks>> getTaskList()
@@ -66,6 +66,47 @@ namespace PersonalTimePlanning.DataBaseOperations
         {
             string sqlCommand = "select * from dbo.toDoList";
             return this.LoadData<toDoList, dynamic>(sqlCommand, new { }).GetAwaiter().GetResult();
+        }
+
+        public async Task<List<Calendar>> getCalendarByAccountId(int account_id)
+        {
+            string sqlCommand = "select * from dbo.calendar where Calendar_ID = @id";
+            List<Calendar> returnedCalendar =  this.LoadData<Calendar, int>(sqlCommand, account_id).GetAwaiter().GetResult();
+            return returnedCalendar;
+        }
+
+        public async Task createAccount(string Name,bool AllowNotification, string ProfilePicturePath, DateTime? StartWorkingHour, DateTime? EndWorkingHour)
+        {
+            string sqlCommand = "insert into dbo.account (Name,AllowNotification,ProfilePicturePath,StartWorkingHour,EndWorkingHour) values (@nam,@allNotif,@ProfilePictPath,@StartWorking,@EndWorking); SELECT SCOPE_IDENTITY()";
+            SqlConnection scn = new SqlConnection();
+            scn.ConnectionString = this._connectionString;
+            SqlCommand scmd = new SqlCommand(sqlCommand, scn);
+            //creat account
+            scmd.Parameters.AddWithValue("@nam", Name);
+            scmd.Parameters.AddWithValue("@allNotif", AllowNotification);
+            scmd.Parameters.AddWithValue("@ProfilePictPath", ProfilePicturePath);
+            scmd.Parameters.AddWithValue("@StartWorking", StartWorkingHour);
+            scmd.Parameters.AddWithValue("@EndWorking", EndWorkingHour);
+            scn.Open();
+            //create calendar associated with account
+            int insertedAccount = Convert.ToInt32(scmd.ExecuteScalarAsync().GetAwaiter().GetResult());
+            string sqlCommandForCalendar = "insert into dbo.calendar (account_ID) values (@accId); SELECT SCOPE_IDENTITY()";
+            scmd = new SqlCommand(sqlCommandForCalendar, scn);
+            scmd.Parameters.AddWithValue("@accId", insertedAccount);
+            
+            int insertedCalendar = Convert.ToInt32(scmd.ExecuteScalarAsync().GetAwaiter().GetResult());
+
+            //update calendar_Id for account
+
+            scmd = new SqlCommand("update dbo.account set Calendar_ID = @id where account_ID = @id2");
+            scmd.Parameters.AddWithValue("@id", insertedCalendar);
+            scmd.Parameters.AddWithValue("@id2", insertedAccount);
+            scmd.ExecuteNonQueryAsync();
+            scn.Close();
+
+
+
+
         }
     }
 }

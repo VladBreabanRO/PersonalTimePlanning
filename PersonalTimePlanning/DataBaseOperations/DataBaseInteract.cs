@@ -1,5 +1,10 @@
-﻿using System;
+﻿using Dapper;
+using PersonalTimePlanning.DataBaseModels;
+using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,13 +20,52 @@ namespace PersonalTimePlanning.DataBaseOperations
         {
             this._connectionString = string.Format(this._connectionString, SERVER_NAME, DATABASE_NAME);
         }
-
-        // to do: functii de genul getTskList
-        //exemplu mai jos:
-        public async Task getTaskList()
+        public  async Task<List<T>> LoadData<T, U>(string sql, U parameter)
         {
-            // scris cod, folosint connection string-ul de mai sus,, pt a luat lista task-urile din db
+            using(IDbConnection connection = new SqlConnection(this._connectionString))
+            {
+                var rows = await connection.QueryAsync<T>(sql, parameter);
+                return rows.ToList();
+            }
         }
 
+        public  Task SaveData<T>(string sql, T parameters)
+        {
+            using(IDbConnection connection = new SqlConnection(this._connectionString))
+            {
+                return connection.ExecuteAsync(sql, parameters);
+            }
+        }
+        // to do: functii de genul getTskList
+        //exemplu mai jos:
+        public async Task<List<Tasks>> getTaskList()
+        {
+            string sqlCommand = "select * from dbo.tasks";
+            return this.LoadData<Tasks, dynamic>(sqlCommand,new { }).GetAwaiter().GetResult(); 
+        }
+
+        public async Task<List<Account>> getAllAccounts()
+        {
+            string sqlCommand = "select * from dbo.account";
+            return this.LoadData<Account, dynamic>(sqlCommand, new { }).GetAwaiter().GetResult();
+        }
+
+        public async Task<List<Calendar>> getAllCalendars()
+        {
+            string sqlCommand = "select * from dbo.calendar";
+            return this.LoadData<Calendar, dynamic>(sqlCommand, new { }).GetAwaiter().GetResult();
+        }
+
+        public async Task<List<Days>> getAllDays()
+        {
+            string sqlCommand = "select * from dbo.days";
+            return this.LoadData<Days, dynamic>(sqlCommand, new { }).GetAwaiter().GetResult();
+        }
+
+        public async Task<List<toDoList>> getAllToDosList()
+        {
+            string sqlCommand = "select * from dbo.toDoList";
+            return this.LoadData<toDoList, dynamic>(sqlCommand, new { }).GetAwaiter().GetResult();
+        }
     }
 }

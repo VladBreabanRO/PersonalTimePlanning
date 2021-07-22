@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PersonalTimePlanning.DataBaseModels
 {
-    class Calendar
+    public class Calendar
     {
 
         public int Calendar_ID

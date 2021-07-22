@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PersonalTimePlanning.DataBaseModels
 {
-    class toDoList
+    public class toDoList
     {
         public int to_do_id
         {

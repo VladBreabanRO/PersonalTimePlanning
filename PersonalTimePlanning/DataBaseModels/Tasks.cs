@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PersonalTimePlanning.DataBaseModels
 {
-    class Tasks
+    public class Tasks
     {
         public int task_id
         {

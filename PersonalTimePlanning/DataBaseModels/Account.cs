@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PersonalTimePlanning.DataBaseModels
 {
-    class Account
+    public class Account
     {
         public int account_Id
         {

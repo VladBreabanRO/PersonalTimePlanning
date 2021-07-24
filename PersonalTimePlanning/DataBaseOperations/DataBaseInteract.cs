@@ -62,7 +62,7 @@ namespace PersonalTimePlanning.DataBaseOperations
             return this.LoadData<Days, dynamic>(sqlCommand, new { }).GetAwaiter().GetResult();
         }
 
-        public async Task<List<toDoList>> getAllToDosList()
+        public async Task<List<toDoList>> getAllToDoList()
         {
             string sqlCommand = "select * from dbo.toDoList";
             return this.LoadData<toDoList, dynamic>(sqlCommand, new { }).GetAwaiter().GetResult();
@@ -96,16 +96,7 @@ namespace PersonalTimePlanning.DataBaseOperations
             
             int insertedCalendar = Convert.ToInt32(scmd.ExecuteScalarAsync().GetAwaiter().GetResult());
 
-            //update calendar_Id for account
-
-            scmd = new SqlCommand("update dbo.account set Calendar_ID = @id where account_ID = @id2");
-            scmd.Parameters.AddWithValue("@id", insertedCalendar);
-            scmd.Parameters.AddWithValue("@id2", insertedAccount);
-            scmd.ExecuteNonQueryAsync();
             scn.Close();
-
-
-
 
         }
     }

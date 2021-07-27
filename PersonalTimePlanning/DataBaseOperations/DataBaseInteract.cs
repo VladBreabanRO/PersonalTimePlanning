@@ -99,5 +99,36 @@ namespace PersonalTimePlanning.DataBaseOperations
             scn.Close();
 
         }
+
+        public async Task createToDoList(string name, int accountId)
+        {
+            string sqlCommand = "insert into dbo.toDoList (name,account_id) values (@nam,@accId); SELECT SCOPE_IDENTITY()";
+            SqlConnection scn = new SqlConnection();
+            scn.ConnectionString = this._connectionString;
+            SqlCommand scmd = new SqlCommand(sqlCommand, scn);
+            //creat account
+            scmd.Parameters.AddWithValue("@nam", name);
+            scmd.Parameters.AddWithValue("@accId", accountId);
+            await scn.OpenAsync();
+            await scmd.ExecuteNonQueryAsync();
+        }
+
+        public async Task createTask(string task_Name, string date, float estimated_duration, DateTime start_hour, DateTime end_hour, int day_id, bool done,int to_do_id)
+        {
+            string sqlCommand = "insert into dbo.tasks (task_Name,date,estimated_duration,start_hour,end_hour,day_id,done,to_do_id) values (@nam,@date,@est_duration,@Start,@End,@day,@done,@to_do); SELECT SCOPE_IDENTITY()";
+            SqlConnection scn = new SqlConnection();
+            scn.ConnectionString = this._connectionString;
+            SqlCommand scmd = new SqlCommand(sqlCommand, scn);
+            scmd.Parameters.AddWithValue("@nam", task_Name);
+            scmd.Parameters.AddWithValue("@date", date);
+            scmd.Parameters.AddWithValue("@est_duration", estimated_duration);
+            scmd.Parameters.AddWithValue("@Start", start_hour);
+            scmd.Parameters.AddWithValue("@End", end_hour);
+            scmd.Parameters.AddWithValue("@day", day_id);
+            scmd.Parameters.AddWithValue("@done", done);
+            scmd.Parameters.AddWithValue("@to_do", to_do_id);
+            await scn.OpenAsync();
+            await scmd.ExecuteNonQueryAsync();
+        }
     }
 }
